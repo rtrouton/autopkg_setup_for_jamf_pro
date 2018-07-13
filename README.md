@@ -29,3 +29,5 @@ If a Jamf Pro file share distribution point is set as the master distribution po
 The script's actions are logged and are stored in `~/Library/Logs`. The log's filename will be similiar to the file name shown below:
 
 `autopkg-setup-for-2018-07-05-123136.log`
+
+Blog post: https://derflounder.wordpress.com/2018/07/13/automating-autopkg-and-jssimporter-setup/
