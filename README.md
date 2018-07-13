@@ -1,6 +1,6 @@
 # AutoPkg Setup Script for Jamf Pro
 
-This script is designed to set up a Mac running macOS 10.12.x or later to be able to run the following:
+This script is designed to set up a Mac running macOS 10.13.x or later to be able to run the following:
 
 * `git`
 * `AutoPkg`
