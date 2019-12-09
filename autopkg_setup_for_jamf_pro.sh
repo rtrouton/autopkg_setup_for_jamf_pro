@@ -169,8 +169,12 @@ installCommandLineTools() {
     	
     	# Identify the correct update in the Software Update feed with "Command Line Tools" in the name for the OS version in question.
     	
-    	cmd_line_tools=$(softwareupdate -l | awk '/\*\ Command Line Tools/ { $1=$1;print }' | grep "$osx_vers" | sed 's/^[[ \t]]*//;s/[[ \t]]*$//;s/*//' | cut -c 2-)
-    	
+    	if [[ "$os_vers" -ge 15 ]]; then
+    	   cmd_line_tools=$(softwareupdate -l | awk '/\*\ Label: Command Line Tools/ { $1=$1;print }' | sed 's/^[[ \t]]*//;s/[[ \t]]*$//;s/*//' | cut -c 9-)	
+    	elif [[ "$os_vers" -ge 10 ]] && [[ "$os_vers" -lt 14 ]]; then
+    	   cmd_line_tools=$(softwareupdate -l | awk '/\*\ Command Line Tools/ { $1=$1;print }' | grep "$os_vers" | sed 's/^[[ \t]]*//;s/[[ \t]]*$//;s/*//' | cut -c 2-)
+    	fi
+    	    	
     	# Check to see if the softwareupdate tool has returned more than one Xcode
     	# command line tool installation option. If it has, use the last one listed
     	# as that should be the latest Xcode command line tool installer.
@@ -198,7 +202,7 @@ installAutoPkg() {
 
     # Install the latest release of AutoPkg
 
-    autopkg_location_LATEST=$(curl https://api.github.com/repos/autopkg/autopkg/releases | python -c 'import json,sys;obj=json.load(sys.stdin);print obj[0]["assets"][0]["browser_download_url"]')
+    autopkg_location_LATEST=$(curl https://api.github.com/repos/autopkg/autopkg/releases/latest | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["assets"][0]["browser_download_url"]')
     /usr/bin/curl -L -s "${autopkg_location_LATEST}" -o "$userhome/autopkg-latest.pkg"
 
     ScriptLogging "Installing AutoPkg"
@@ -417,6 +421,15 @@ else
 fi
 
 # Check for Python requests module and install if needed.
+
+if [[ $(pip list | awk '/requests/ {print $1}') = "" ]]; then
+    installPythonRequestsModule
+else
+    ScriptLogging "Python requests module installed"
+    echo "### Requests Installed"
+fi
+
+# Check for Python jss module and install if needed.
 
 if [[ $(pip list | awk '/requests/ {print $1}') = "" ]]; then
     installPythonRequestsModule
